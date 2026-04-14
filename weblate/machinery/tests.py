@@ -504,6 +504,21 @@ class MachineTranslationTest(BaseMachineTranslationTest):
             ],
         )
 
+    def test_placeholders_rst_doc_explicit_title(self) -> None:
+        machine_translation = self.get_machine()
+        unit = MockUnit(
+            code="cs",
+            source=r"Hello, :doc:`Fields <studio/fields>`!",
+            flags="rst-text",
+        )
+        self.assertEqual(
+            machine_translation.cleanup_text(unit.source, unit),
+            (
+                "Hello, [X7X]Fields[X19X]!",
+                {"[X7X]": ":doc:`", "[X19X]": " <studio/fields>`"},
+            ),
+        )
+
     def test_batch(self, machine=None) -> None:
         if machine is None:
             machine = self.get_machine()

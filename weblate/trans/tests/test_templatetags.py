@@ -633,6 +633,29 @@ glosář [glossary]">glossary</span>
             """,
         )
 
+    def test_highlight_rst_doc_explicit_title(self) -> None:
+        unit = self.translation.unit_set.create(source="Hello, :doc:`Fields <studio/fields>`!")
+        unit.flags = "rst-text"
+        unit.save()
+        self.assertHTMLEqual(
+            format_translation(
+                ["Hello, :doc:`Fields <studio/fields>`!"],
+                self.component.source_language,
+                unit=unit,
+            )["items"][0]["content"],
+            """
+            Hello,
+            <span class="hlcheck" data-value=":doc:`">
+                <span class="highlight-number"></span>:doc:`
+            </span>
+            Fields
+            <span class="hlcheck" data-value=" &lt;studio/fields&gt;`">
+                <span class="highlight-number"></span> &lt;studio/fields&gt;`
+            </span>
+            !
+            """,
+        )
+
     def test_search(self) -> None:
         self.assertHTMLEqual(
             format_translation(

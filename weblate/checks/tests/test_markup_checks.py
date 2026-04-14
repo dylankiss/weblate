@@ -458,7 +458,7 @@ class RSTReferencesCheckTest(CheckTestCase):
         self.test_highlight = (
             "rst-text",
             ":ref:`bar` is :doc:`foo <baz>`",
-            [(0, 10, ":ref:`bar`"), (14, 30, ":doc:`foo <baz>`")],
+            [(0, 10, ":ref:`bar`"), (14, 20, ":doc:`"), (23, 30, " <baz>`")],
         )
 
     def test_description(self) -> None:

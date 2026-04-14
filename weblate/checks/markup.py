@@ -631,9 +631,37 @@ class RSTReferencesCheck(RSTBaseCheck):
         _references, _counter, alltags = extract_rst_references(source)
         if not alltags:
             return
+
+        def iter_tag_highlights(start: int, text: str):
+            role_match = re.match(r"^:(?P<role>[^:]+):`(?P<body>.*)`$", text)
+            if role_match is None:
+                yield start, start + len(text), text
+                return
+
+            role = role_match.group("role")
+            if role in RST_TRANSLATABLE:
+                yield start, start + len(text), text
+                return
+
+            body = role_match.group("body")
+            explicit_title = RST_EXPLICIT_TITLE_RE.match(body)
+            if explicit_title is None:
+                yield start, start + len(text), text
+                return
+
+            title = explicit_title.group(1)
+            prefix = f":{role}:`"
+            suffix = f"{body[len(title):]}`"
+
+            if prefix:
+                yield start, start + len(prefix), prefix
+            if suffix:
+                suffix_start = start + len(prefix) + len(title)
+                yield suffix_start, suffix_start + len(suffix), suffix
+
         match_exp = "|".join(re.escape(tag) for tag in alltags)
         for match in re.finditer(match_exp, source):
-            yield match.start(0), match.end(0), match.group(0)
+            yield from iter_tag_highlights(match.start(0), match.group(0))
 
 
 @cache
