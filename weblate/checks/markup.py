@@ -651,7 +651,7 @@ class RSTReferencesCheck(RSTBaseCheck):
 
             title = explicit_title.group(1)
             prefix = f":{role}:`"
-            suffix = f"{body[len(title):]}`"
+            suffix = f"{body[len(title) :]}`"
 
             if prefix:
                 yield start, start + len(prefix), prefix

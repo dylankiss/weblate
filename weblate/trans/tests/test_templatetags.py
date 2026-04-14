@@ -634,7 +634,9 @@ glosář [glossary]">glossary</span>
         )
 
     def test_highlight_rst_doc_explicit_title(self) -> None:
-        unit = self.translation.unit_set.create(source="Hello, :doc:`Fields <studio/fields>`!")
+        unit = self.translation.unit_set.create(
+            source="Hello, :doc:`Fields <studio/fields>`!"
+        )
         unit.flags = "rst-text"
         unit.save()
         self.assertHTMLEqual(
